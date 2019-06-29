@@ -11,6 +11,9 @@
 
     <artifactId>hw01-maven</artifactId>
     <name>hw01-maven</name>
+    <properties>
+        <start-class>ru.otus.homework.HelloOtus</start-class>
+    </properties>
 
     <dependencies>
         <dependency>
