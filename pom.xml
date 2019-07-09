@@ -4,9 +4,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>otusDZ</groupId>
-    <artifactId>em</artifactId>
+    <groupId>ru.otus</groupId>
+    <artifactId>emOtusJavaHW</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <description>EM home works</description>
 
+    <modules>
+        <module>hw01-maven</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <com.google.guava.version>28.0-jre</com.google.guava.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${com.google.guava.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <packaging>pom</packaging>
 </project>
