@@ -1,4 +1,4 @@
-package ru.otus.homework;
+package otus.homework;
 
 import com.google.common.collect.Lists;
 
