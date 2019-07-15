@@ -9,6 +9,23 @@ import java.util.stream.Stream;
 public class DIYArrayList<T> implements List<T> {
     private int size;
     transient Object[] elementData;
+    /**
+     * Default initial capacity.
+     */
+    private static final int DEFAULT_CAPACITY = 10;
+    /**
+     * Shared empty array instance used for default sized empty instances. We
+     * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when
+     * first element is added.
+     */
+    private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+    /**
+     * The maximum size of array to allocate (unless necessary).
+     * Some VMs reserve some header words in an array.
+     * Attempts to allocate larger arrays may result in
+     * OutOfMemoryError: Requested array size exceeds VM limit
+     */
+    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     @Override
     public void replaceAll(UnaryOperator<T> operator) {
@@ -117,9 +134,23 @@ public class DIYArrayList<T> implements List<T> {
 
     @Override
     public boolean add(T t) {
-        grow(size + 1);
-        elementData[size++] = t;
+        add(t, elementData, size);
         return true;
+//        grow(size + 1);
+//        elementData[size++] = t;
+//        return true;
+    }
+
+    /**
+     * This helper method split out from add(E) to keep method
+     * bytecode size under 35 (the -XX:MaxInlineSize default value),
+     * which helps when add(E) is called in a C1-compiled loop.
+     */
+    private void add(T e, Object[] elementData, int s) {
+        if (s == elementData.length)
+            elementData = grow();
+        elementData[s] = e;
+        size = s + 1;
     }
 
     @Override
@@ -136,10 +167,16 @@ public class DIYArrayList<T> implements List<T> {
     public boolean addAll(Collection<? extends T> c) {
         Object[] a = c.toArray();
         int numNew = a.length;
-        grow(size + numNew);
+        if (numNew == 0)
+            return false;
+        Object[] elementData;
+        final int s;
+        if (numNew > (elementData = this.elementData).length - (s = size))
+            elementData = grow(s + numNew);
         System.arraycopy(a, 0, elementData, size, numNew);
-        size += numNew;
-        return numNew != 0;
+        size = s + numNew;
+
+        return true;
     }
 
     @Override
@@ -164,11 +201,13 @@ public class DIYArrayList<T> implements List<T> {
 
     @Override
     public T get(int index) {
+        Objects.checkIndex(index, size);
         return (T) elementData[index];
     }
 
     @Override
     public T set(int index, T element) {
+        Objects.checkIndex(index, size);
         T oldValue = get(index);
         elementData[index] = element;
         return oldValue;
@@ -311,9 +350,46 @@ public class DIYArrayList<T> implements List<T> {
      * Increases the capacity to ensure that it can hold at least the
      * number of elements specified by the new capacity argument.
      *
-     * @param newCapacity the desired minimum capacity
+     * @param minCapacity the desired minimum capacity
      */
-    private void grow(int newCapacity) {
-        elementData = Arrays.copyOf(elementData, newCapacity);
+    private Object[] grow(int minCapacity) {
+        return elementData = Arrays.copyOf(elementData, newCapacity(minCapacity));
+    }
+
+    private Object[] grow() {
+        return grow(size + 1);
+    }
+
+    /**
+     * Returns a capacity at least as large as the given minimum capacity.
+     * Returns the current capacity increased by 50% if that suffices.
+     * Will not return a capacity greater than MAX_ARRAY_SIZE unless
+     * the given minimum capacity is greater than MAX_ARRAY_SIZE.
+     *
+     * @param minCapacity the desired minimum capacity
+     * @throws OutOfMemoryError if minCapacity is less than zero
+     */
+    private int newCapacity(int minCapacity) {
+        // overflow-conscious code
+        int oldCapacity = elementData.length;
+        int newCapacity = oldCapacity + (oldCapacity >> 1);
+        if (newCapacity - minCapacity <= 0) {
+            if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA)
+                return Math.max(DEFAULT_CAPACITY, minCapacity);
+            if (minCapacity < 0) // overflow
+                throw new OutOfMemoryError();
+            return minCapacity;
+        }
+        return (newCapacity - MAX_ARRAY_SIZE <= 0)
+                ? newCapacity
+                : hugeCapacity(minCapacity);
+    }
+
+    private static int hugeCapacity(int minCapacity) {
+        if (minCapacity < 0) // overflow
+            throw new OutOfMemoryError();
+        return (minCapacity > MAX_ARRAY_SIZE)
+                ? Integer.MAX_VALUE
+                : MAX_ARRAY_SIZE;
     }
 }

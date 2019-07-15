@@ -10,33 +10,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DIYArrayListTest {
     @Test
     void addAll() {
-        DIYArrayList<Integer> first = new DIYArrayList<>();
-        DIYArrayList<Integer> second = new DIYArrayList<>();
-
-        int i = 0;
         int max = 40;
+        DIYArrayList<Integer> first = new DIYArrayList<>();
+        Integer[] second = new Integer[max];
 
-        for (;i < max; i++) {
+
+        for (int i = 0; i < max; i++) {
             first.add(i);
-            second.add(i);
+            second[i] = i;
         }
 
         assertEquals(max, first.size());
-        assertEquals(max, second.size());
+        assertEquals(max, second.length);
 
-        Collections.addAll(first, second.toArray(Integer[]::new));
+        Collections.addAll(first, second);
         assertEquals(max * 2, first.size());
     }
 
     @Test
     void copy() {
-        int i = 0;
         int max = 40;
 
         DIYArrayList<Integer> even = new DIYArrayList<>();
         DIYArrayList<Integer> odd = new DIYArrayList<>(max);
 
-        for (;i < max; i++) {
+        for (int i = 0; i < max; i++) {
             if (i%2==0) {
                 even.add(i);
             } else {
