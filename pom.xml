@@ -12,6 +12,7 @@
 
     <modules>
         <module>hw01-maven</module>
+        <module>hw06-annotations</module>
     </modules>
 
     <properties>
@@ -19,6 +20,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <com.google.guava.version>28.0-jre</com.google.guava.version>
         <org.junit.jupiter.version>5.5.0</org.junit.jupiter.version>
+        <org.projectlombok.lombok.version>1.18.8</org.projectlombok.lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -33,6 +35,12 @@
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${org.junit.jupiter.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${org.projectlombok.lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
 
