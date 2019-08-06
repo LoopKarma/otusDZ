@@ -12,6 +12,7 @@
 
     <modules>
         <module>hw01-maven</module>
+        <module>hw11-atm</module>
     </modules>
 
     <properties>
