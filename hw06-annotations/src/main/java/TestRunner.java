@@ -1,22 +1,27 @@
 import annotations.After;
 import annotations.Before;
-import annotations.Test;
+import exception.TestCaseException;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.SneakyThrows;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class TestRunner {
-    public void doRun(String className) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+class TestRunner {
+    void doRun(String className) throws TestCaseException, ClassNotFoundException {
         Class<?> clazz = Class.forName(className);
-        List<TestRunner.TestCase> testCases = getTestCases(clazz, this);
+        List<TestRunner.TestCase> testCases = getTestCases(clazz);
         for (TestRunner.TestCase testCase: testCases) {
-            this.runTestCase(testCase);
+            try {
+                this.runTestCase(testCase);
+            } catch (ReflectiveOperationException e) {
+                throw new TestCaseException(e);
+            }
         }
         this.printStatistics(testCases);
     }
@@ -26,87 +31,59 @@ public class TestRunner {
         System.out.println("\n\n\n=======\nTests executed: " + testCases.size());
     }
 
-    private List<TestCase> getTestCases(Class<?> clazz, TestRunner runner) {
-        List<Method> testMethods = runner.getTestMethods(clazz);
-        Method beforeTest = runner.getAnnotatedMethods(clazz, Before.class);
-        Method afterTest = runner.getAnnotatedMethods(clazz, After.class);
-        List<TestCase> testCases = new ArrayList<>();
+    private List<TestCase> getTestCases(Class<?> clazz) {
+        List<Method> testMethods = AnnotationMethodsSearchHelper.getTestMethods(clazz);
+        Method beforeTest = AnnotationMethodsSearchHelper.getAnnotatedMethod(clazz, Before.class);
+        Method afterTest = AnnotationMethodsSearchHelper.getAnnotatedMethod(clazz, After.class);
 
-        for (Method testMethod: testMethods) {
-            TestCase testCase = this.createTestCase();
-            testCase.setBeforeTest(Optional.ofNullable(beforeTest));
-            testCase.setAfterTest(Optional.ofNullable(afterTest));
-            testCase.setTestMethod(testMethod);
-            testCase.setClazz(clazz);
-            testCases.add(testCase);
-        }
-        return testCases;
+        return testMethods
+                .stream()
+                .map(m -> new TestCase(clazz, m, beforeTest, afterTest, null, false))
+                .collect(Collectors.toList());
     }
 
-    private void runTestCase(TestCase testCase) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    private void runTestCase(TestCase testCase) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         System.out.println("\n\n--------");
         Constructor<?> constructor = testCase.getClazz().getDeclaredConstructor();
         Object instance = constructor.newInstance();
 
-        if (testCase.getBeforeTest().isPresent()) {
-            testCase.getBeforeTest().get().invoke(instance);
-        }
-
+        testCase.getBeforeTest().ifPresent(method -> invoke(method, instance));
         try {
             testCase.getTestMethod().invoke(instance);
         } catch (Throwable e) {
-            System.out.println("Exception thrown: " + e.toString());
-            testCase.setException(e);
+
+            System.out.println("Exception thrown during running test: " + e.getCause().toString());
+            testCase.setException(e.getCause());
             testCase.setPassed(false);
         }
-
-        if (testCase.getAfterTest().isPresent()) {
-            testCase.getAfterTest().get().invoke(instance);
-        }
+        testCase.getAfterTest().ifPresent(method -> invoke(method, instance));
 
         System.out.println("--------");
     }
 
-    private Method getAnnotatedMethods(Class<?> clazz, Class annotationClass) {
-        Method[] declaredMethods = clazz.getDeclaredMethods();
-        for (Method method: declaredMethods) {
-            for (Annotation annotation: method.getAnnotations()) {
-                if (annotation.annotationType().equals(annotationClass)) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private List<Method> getTestMethods(Class<?> clazz) {
-        List<Method> testMethods = new ArrayList<Method>();
-        Method[] declaredMethods = clazz.getDeclaredMethods();
-        for (Method method: declaredMethods) {
-            for (Annotation annotation: method.getAnnotations()) {
-                if (annotation.annotationType().equals(Test.class)) {
-                    testMethods.add(method);
-                }
-            }
-        }
-
-        return testMethods;
-    }
-
-    private TestCase createTestCase() {
-        return new TestCase();
+    @SneakyThrows
+    private void invoke(Method method, Object instance) {
+        method.invoke(instance);
     }
 
     @Data
+    @AllArgsConstructor
     private class TestCase {
         Class <?> clazz;
         Method testMethod;
-        Optional<Method> beforeTest;
-        Optional<Method> afterTest;
+        Method beforeTest;
+        Method afterTest;
         Throwable exception;
         boolean isPassed;
 
         TestCase() {}
+
+        Optional<Method> getBeforeTest() {
+            return Optional.ofNullable(beforeTest);
+        }
+
+        Optional<Method> getAfterTest() {
+            return Optional.ofNullable(afterTest);
+        }
     }
 }
