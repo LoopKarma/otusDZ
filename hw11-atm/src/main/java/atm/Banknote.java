@@ -1,3 +1,5 @@
+package atm;
+
 public enum Banknote {
     FIVE(5),
     TEN(10),
