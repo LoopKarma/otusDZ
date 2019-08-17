@@ -2,9 +2,11 @@ package atm.domain;
 
 import atm.Banknote;
 import atm.exception.InvalidBanknoteNominalException;
+import atm.exception.NoBanknotesFound;
 
 public interface CashBox {
-    boolean canAcceptBanknote(Banknote banknote);
+    int getAcceptedBanknoteNominal();
     void acceptBanknote(Banknote banknote) throws InvalidBanknoteNominalException;
+    Banknote getBanknote() throws NoBanknotesFound;
     int calculateSum();
 }
