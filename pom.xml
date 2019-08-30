@@ -13,6 +13,7 @@
     <modules>
         <module>hw01-maven</module>
         <module>hw06-annotations</module>
+        <module>hw04-logging</module>
     </modules>
 
     <properties>
@@ -21,6 +22,9 @@
         <com.google.guava.version>28.0-jre</com.google.guava.version>
         <org.junit.jupiter.version>5.5.0</org.junit.jupiter.version>
         <org.projectlombok.lombok.version>1.18.8</org.projectlombok.lombok.version>
+        <org.javassist.version>3.25.0-GA</org.javassist.version>
+        <org.apache.maven.shade-plugin.version>3.2.1</org.apache.maven.shade-plugin.version>
+        <org.apache.maven.assembly-plugin.version>3.1.1</org.apache.maven.assembly-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -42,9 +46,30 @@
                 <version>${org.projectlombok.lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${org.javassist.version}</version>
+            </dependency>
         </dependencies>
-
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${org.apache.maven.assembly-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${org.apache.maven.shade-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <packaging>pom</packaging>
 </project>
