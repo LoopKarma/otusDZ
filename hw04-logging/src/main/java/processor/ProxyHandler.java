@@ -7,8 +7,9 @@ import annotation.Log;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ProxyHandler {
@@ -20,11 +21,11 @@ public class ProxyHandler {
 
     static class DemoInvocationHandler implements InvocationHandler {
         private final TestLogging myClass;
-        private ArrayList<String> annotatedMethods;
+        private Set<String> annotatedMethods;
 
         DemoInvocationHandler(TestLogging myClass) {
             this.myClass = myClass;
-            annotatedMethods = new ArrayList<>();
+            annotatedMethods = new HashSet<>();
             collectAnnotatedMethods();
         }
 

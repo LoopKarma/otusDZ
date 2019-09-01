@@ -20,15 +20,11 @@ public class Agent {
                                     byte[] classfileBuffer) {
                 try {
                     CtClass cc = getCompileTimeClass(className);
-                    if (cc.getName().equals("annotated.TestLoggingImpl")) {
-                        byte[] bytes = addProxyMethods(cc, classfileBuffer);
-                        return bytes;
-                    }
+                    return addProxyMethodsIfPossible(cc, classfileBuffer);
                 } catch (Exception e) {
                     System.out.println("Error: " + e.getMessage());
                     return classfileBuffer;
                 }
-                return classfileBuffer;
             }
         });
     }
@@ -39,7 +35,7 @@ public class Agent {
         return classPool.get(classNamePoint);
     }
 
-    private static byte[] addProxyMethods(CtClass clazz, byte[] originalClass) throws IOException, CannotCompileException, NotFoundException {
+    private static byte[] addProxyMethodsIfPossible(CtClass clazz, byte[] originalClass) throws IOException, CannotCompileException, NotFoundException {
         CtMethod[] methods = clazz.getDeclaredMethods();
         byte[] result = originalClass;
         for (CtMethod method : methods) {
