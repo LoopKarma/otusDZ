@@ -15,7 +15,7 @@ public class WithdrawLessBanknotes implements WithdrawPolicy {
         int leftToWithdraw = amount;
         ArrayList<Banknote> banknotes = new ArrayList<>();
         for (Integer banknoteNominal: availableNotes) {
-            while (banknoteNominal <= leftToWithdraw) {
+            while (banknoteNominal <= leftToWithdraw && cashBoxes.get(banknoteNominal).calculateSum() > 0) {
                 leftToWithdraw -= banknoteNominal;
                 banknotes.add(cashBoxes.get(banknoteNominal).getBanknote());
             }

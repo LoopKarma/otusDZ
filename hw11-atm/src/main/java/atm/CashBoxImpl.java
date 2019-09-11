@@ -4,9 +4,11 @@ import atm.domain.CashBox;
 import atm.exception.InvalidBanknoteNominalException;
 import atm.exception.NoBanknotesFound;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class CashBoxImpl implements CashBox {
+public class CashBoxImpl implements CashBox, Serializable {
     private int acceptedRating;
     private int count;
     private ArrayList<Banknote> banknotes;
@@ -16,6 +18,26 @@ public class CashBoxImpl implements CashBox {
             if (banknote.getAmount() == rating) {
                 acceptedRating = rating;
                 banknotes = new ArrayList<>();
+                return;
+            }
+        }
+        throw new InvalidBanknoteNominalException();
+    }
+
+    //handy constructor to create cashbox with some banknotes inside
+    public CashBoxImpl(int rating, List<Banknote> banknotes) {
+        for (Banknote banknote: Banknote.values()) {
+            if (banknote.getAmount() == rating) {
+                acceptedRating = rating;
+                this.banknotes = new ArrayList<>();
+
+                for (Banknote b : banknotes) {
+                    if (b.getAmount() != rating) {
+                        throw new InvalidBanknoteNominalException();
+                    }
+                    this.banknotes.add(b);
+                    count++;
+                }
                 return;
             }
         }
