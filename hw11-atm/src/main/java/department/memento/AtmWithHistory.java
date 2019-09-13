@@ -1,22 +1,25 @@
 package department.memento;
 
 import atm.Banknote;
+import atm.domain.Atm;
 import atm.domain.CashBox;
 import atm.domain.WithdrawPolicy;
 import atm.exception.InvalidBanknoteNominalException;
 import atm.exception.WithdrawException;
+import lombok.Data;
 
-import java.io.*;
-import java.util.Base64;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AtmWithWithStateHistoryImpl implements AtmWithStateHistory {
+@Data
+public class AtmWithHistory implements StateHistoryBehavior, Atm, Serializable {
+    private static final long serialVersionUID = 0L;
     private Map<Integer, CashBox> cashBoxes = new HashMap<Integer, CashBox>();
     private WithdrawPolicy withdrawPolicy;
 
-    public AtmWithWithStateHistoryImpl(Collection<CashBox> cashBoxes, WithdrawPolicy withdrawPolicy) {
+    public AtmWithHistory(Collection<CashBox> cashBoxes, WithdrawPolicy withdrawPolicy) {
         for (CashBox cashBox: cashBoxes) {
             Integer nominal = cashBox.getAcceptedBanknoteNominal();
             this.cashBoxes.put(nominal, cashBox);
@@ -54,32 +57,5 @@ public class AtmWithWithStateHistoryImpl implements AtmWithStateHistory {
                 .map(CashBox::calculateSum)
                 .mapToInt(Integer::intValue)
                 .sum();
-    }
-
-    @Override
-    public String backupState() {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(this.cashBoxes);
-            oos.close();
-            return Base64.getEncoder().encodeToString(baos.toByteArray());
-        } catch (IOException e) {
-            return "";
-        }
-    }
-
-    @Override
-    public void restoreLastState(String state) {
-        try {
-            byte[] data = Base64.getDecoder().decode(state);
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-            this.cashBoxes = (Map) ois.readObject();
-            ois.close();
-        } catch (ClassNotFoundException e) {
-            System.out.print("ClassNotFoundException occurred.");
-        } catch (IOException e) {
-            System.out.print("IOException occurred.");
-        }
     }
 }

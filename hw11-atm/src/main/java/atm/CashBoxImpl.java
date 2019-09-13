@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CashBoxImpl implements CashBox, Serializable {
+    private static final long serialVersionUID = 0L;
     private int acceptedRating;
     private int count;
     private ArrayList<Banknote> banknotes;

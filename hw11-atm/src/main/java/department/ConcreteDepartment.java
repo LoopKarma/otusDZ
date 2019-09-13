@@ -4,36 +4,36 @@ import atm.Banknote;
 import atm.domain.Atm;
 import department.adv.behavior.RevolutBankAdv;
 import department.adv.behavior.TomsInsuranceAdv;
-import department.decorator.AdvertisementAtmWithDecorator;
+import department.decorator.AdvertisementAtmDecorator;
 import department.events.RestorePreviousStateEvent;
 import department.events.SaveStateEvent;
-import department.memento.AtmWithStateHistory;
+import department.memento.AtmWithHistory;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ConcreteDepartment implements Department {
-    private HashMap<Integer, AtmWithStateHistory> atmItems = new HashMap<>();
+    private HashMap<Integer, AdvertisementAtmDecorator> atmItems = new HashMap<>();
     private HashMap<Integer, LinkedList<String>> atmHistory = new HashMap<>();
 
-    ConcreteDepartment(List<AtmWithStateHistory> atmList) {
-        for (AtmWithStateHistory atm : atmList) {
-            AdvertisementAtmWithDecorator decoratedAtm = createAdvertisementAtmDecorator(atm);
+    ConcreteDepartment(List<AtmWithHistory> atmList) {
+        for (Atm atm : atmList) {
+            AdvertisementAtmDecorator decoratedAtm = createAdvertisementAtmDecorator(atm);
             this.atmItems.put(decoratedAtm.hashCode(), decoratedAtm);
             initializeAtmHistory(decoratedAtm);
         }
     }
 
-    private AdvertisementAtmWithDecorator createAdvertisementAtmDecorator(AtmWithStateHistory atm) {
-        AdvertisementAtmWithDecorator decoratedAtm = new AdvertisementAtmWithDecorator(atm);
+    private AdvertisementAtmDecorator createAdvertisementAtmDecorator(Atm atm) {
+        AdvertisementAtmDecorator decoratedAtm = new AdvertisementAtmDecorator(atm);
         decoratedAtm.addAdvBehaviour(new RevolutBankAdv());
         decoratedAtm.addAdvBehaviour(new TomsInsuranceAdv());
         return decoratedAtm;
     }
 
 
-    private void initializeAtmHistory(AtmWithStateHistory atm) {
+    private void initializeAtmHistory(AdvertisementAtmDecorator atm) {
         LinkedList<String> history = new LinkedList<>();
         history.add(atm.backupState());
 
@@ -41,7 +41,7 @@ public class ConcreteDepartment implements Department {
     }
 
     void doSomeWork() {
-        for (AtmWithStateHistory atm: atmItems.values()) {
+        for (AdvertisementAtmDecorator atm: atmItems.values()) {
             atm.withdrawAmount(Banknote.FIVE.getAmount());
             atm.withdrawAmount(Banknote.TWO_HUNDREDS.getAmount());
         }
@@ -68,7 +68,7 @@ public class ConcreteDepartment implements Department {
     }
 
     private void restoreStateForAtms() {
-        for (AtmWithStateHistory atm: atmItems.values()) {
+        for (AdvertisementAtmDecorator atm: atmItems.values()) {
             LinkedList<String> history = atmHistory.get(atm.hashCode());
             atm.restoreLastState(history.getLast());
             history.removeLast();
@@ -76,7 +76,7 @@ public class ConcreteDepartment implements Department {
     }
 
     private void saveStateForAtms() {
-        for (AtmWithStateHistory atm: atmItems.values()) {
+        for (AdvertisementAtmDecorator atm: atmItems.values()) {
             LinkedList<String> history = atmHistory.get(atm.hashCode());
             history.add(atm.backupState());
             atmHistory.put(atm.hashCode(), history);

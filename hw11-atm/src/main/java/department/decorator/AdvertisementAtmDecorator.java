@@ -1,14 +1,15 @@
 package department.decorator;
 
+import atm.domain.Atm;
 import department.adv.behavior.AdvertisementBehavior;
-import department.memento.AtmWithStateHistory;
+import department.memento.StateHistoryBehavior;
 
 import java.util.HashSet;
 
-public class AdvertisementAtmWithDecorator extends AtmWithDecorator {
+public class AdvertisementAtmDecorator extends DecoratorBehavior implements StateHistoryBehavior {
     private HashSet<AdvertisementBehavior> advBehaviourPool = new HashSet<>();
 
-    public AdvertisementAtmWithDecorator(AtmWithStateHistory atm) {
+    public AdvertisementAtmDecorator(Atm atm) {
         super(atm);
     }
 
@@ -30,11 +31,16 @@ public class AdvertisementAtmWithDecorator extends AtmWithDecorator {
 
     @Override
     public String backupState() {
-        return atm.backupState();
+        if (atm instanceof StateHistoryBehavior) {
+            return ((StateHistoryBehavior) atm).backupState();
+        }
+        return "";
     }
 
     @Override
     public void restoreLastState(String state) {
-        atm.restoreLastState(state);
+        if (atm instanceof StateHistoryBehavior) {
+            ((StateHistoryBehavior) atm).restoreLastState(state);
+        }
     }
 }

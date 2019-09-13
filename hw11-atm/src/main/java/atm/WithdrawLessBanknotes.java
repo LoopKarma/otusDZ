@@ -4,9 +4,11 @@ import atm.domain.CashBox;
 import atm.domain.WithdrawPolicy;
 import atm.exception.WithdrawException;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class WithdrawLessBanknotes implements WithdrawPolicy {
+public class WithdrawLessBanknotes implements WithdrawPolicy, Serializable {
+    private static final long serialVersionUID = 0L;
     @Override
     public Collection<Banknote> doWithdraw(int amount, Map<Integer, CashBox> cashBoxes) {
         Integer[] availableNotes = cashBoxes.keySet().toArray(new Integer[cashBoxes.keySet().size()]);

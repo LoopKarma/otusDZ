@@ -1,16 +1,16 @@
 package department.decorator;
 
 import atm.Banknote;
+import atm.domain.Atm;
 import atm.exception.InvalidBanknoteNominalException;
 import atm.exception.WithdrawException;
-import department.memento.AtmWithStateHistory;
 
 import java.util.Collection;
 
-public abstract class AtmWithDecorator implements AtmWithStateHistory {
-    protected AtmWithStateHistory atm;
+public abstract class DecoratorBehavior implements Atm {
+    protected Atm atm;
 
-    AtmWithDecorator(AtmWithStateHistory atm) {
+    DecoratorBehavior(Atm atm) {
         this.atm = atm;
     }
 

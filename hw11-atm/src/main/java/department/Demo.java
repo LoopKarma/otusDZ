@@ -1,12 +1,14 @@
 package department;
 
-import atm.*;
+import atm.Banknote;
+import atm.BanknoteCreator;
+import atm.CashBoxImpl;
+import atm.WithdrawLessBanknotes;
 import atm.domain.CashBox;
 import atm.domain.WithdrawPolicy;
 import department.events.RestorePreviousStateEvent;
 import department.events.SaveStateEvent;
-import department.memento.AtmWithStateHistory;
-import department.memento.AtmWithWithStateHistoryImpl;
+import department.memento.AtmWithHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +17,10 @@ public class Demo {
     public static void main(String[] args) {
         WithdrawPolicy withdrawPolicy = new WithdrawLessBanknotes();
 
-        List<AtmWithStateHistory> atmList = new ArrayList<>();
-        atmList.add(new AtmWithWithStateHistoryImpl(initializeCashBoxes(), withdrawPolicy));
-        atmList.add(new AtmWithWithStateHistoryImpl(initializeCashBoxes(), withdrawPolicy));
-        atmList.add(new AtmWithWithStateHistoryImpl(initializeCashBoxes(), withdrawPolicy));
+        List<AtmWithHistory> atmList = new ArrayList<>();
+        atmList.add(new AtmWithHistory(initializeCashBoxes(), withdrawPolicy));
+        atmList.add(new AtmWithHistory(initializeCashBoxes(), withdrawPolicy));
+        atmList.add(new AtmWithHistory(initializeCashBoxes(), withdrawPolicy));
 
         ConcreteDepartment department = new ConcreteDepartment(atmList);
         department.getBalance();
