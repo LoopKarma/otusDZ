@@ -15,6 +15,7 @@
         <module>hw06-annotations</module>
         <module>hw04-logging</module>
         <module>hw11-atm</module>
+        <module>hw15-json</module>
     </modules>
 
     <properties>
@@ -27,6 +28,9 @@
         <org.apache.maven.shade-plugin.version>3.2.1</org.apache.maven.shade-plugin.version>
         <org.apache.maven.assembly-plugin.version>3.1.1</org.apache.maven.assembly-plugin.version>
         <org.mockito.version>3.0.0</org.mockito.version>
+        <javax.json-api.version>1.1.4</javax.json-api.version>
+        <javax.json.version>1.1.2</javax.json.version>
+        <assertj-core.version>3.11.1</assertj-core.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +73,22 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${org.javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>${javax.json.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.json</groupId>
+                <artifactId>javax.json-api</artifactId>
+                <version>${javax.json-api.version}</version>
             </dependency>
         </dependencies>
 
