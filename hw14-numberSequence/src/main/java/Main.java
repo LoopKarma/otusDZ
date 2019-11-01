@@ -12,10 +12,11 @@ public class Main {
 
     private StringBuilder sequenceT1 = new StringBuilder("");
     private StringBuilder sequenceT2 = new StringBuilder("");
+    private String lastThreadExecuted;
 
     Map<Integer, StringBuilder> run() {
-        Thread thread1 = new Thread(this::incT1);
-        Thread thread2 = new Thread(this::incT2);
+        Thread thread1 = new Thread(new ThreadTask(sequenceT1));
+        Thread thread2 = new Thread(new ThreadTask(sequenceT2));
 
         thread1.start();
         thread2.start();
@@ -35,56 +36,45 @@ public class Main {
         return result;
     }
 
-    private void incT1() {
-        while (!Thread.interrupted()) {
-            int i = 1;
-            for (; i < 10; i++) {
-                writeNumberT1(i);
+    class ThreadTask implements Runnable {
+        StringBuilder sequence;
+
+        ThreadTask(StringBuilder sequence) {
+            this.sequence = sequence;
+        }
+
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                int i = 1;
+                for (; i < 10; i++) {
+                    writeNumber(sequence, i);
+                }
+                for (; i > 1; i--) {
+                    writeNumber(sequence, i);
+                }
             }
-            for (; i > 1; i--) {
-                writeNumberT1(i);
-            }
-            if (Thread.currentThread().isInterrupted()) {
+        }
+    }
+
+
+    private synchronized void writeNumber(StringBuilder sequence, int number) {
+        String threadName = Thread.currentThread().getName();
+        if (lastThreadExecuted != null && lastThreadExecuted.equals(threadName)) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
-    }
-
-    private void incT2() {
-        while (!Thread.interrupted()) {
-            int i = 1;
-            for (; i < 10; i++) {
-                writeNumberT2(i);
-            }
-            for (; i > 1; i--) {
-                writeNumberT2(i);
-            }
-            if (Thread.currentThread().isInterrupted()) {
-                Thread.currentThread().interrupt();
-            }
+        if (lastThreadExecuted == null) {
+            sequence.append(number);
+            lastThreadExecuted = threadName;
+        } else if (!lastThreadExecuted.equals(threadName))  {
+            sequence.append(" ");
+            sequence.append(number);
+            lastThreadExecuted = threadName;
         }
-    }
-
-
-    private synchronized void writeNumberT1(int number) {
         notify();
-        sequenceT1.append(number);
-        try {
-            wait();
-            sequenceT1.append(" ");
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private synchronized void writeNumberT2(int number) {
-        notify();
-        sequenceT2.append(" ");
-        try {
-            wait();
-            sequenceT2.append(number);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
