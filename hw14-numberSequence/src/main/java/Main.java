@@ -17,6 +17,8 @@ public class Main {
     Map<Integer, StringBuilder> run() {
         Thread thread1 = new Thread(new ThreadTask(sequenceT1));
         Thread thread2 = new Thread(new ThreadTask(sequenceT2));
+        thread1.setName("1");
+        thread2.setName("2");
 
         thread1.start();
         thread2.start();
@@ -68,11 +70,11 @@ public class Main {
             }
         }
         if (lastThreadExecuted == null) {
-            sequence.append(number);
+            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
             lastThreadExecuted = threadName;
         } else if (!lastThreadExecuted.equals(threadName))  {
-            sequence.append(" ");
-            sequence.append(number);
+            sequence.append(" " + "(" + Thread.currentThread().getName() + ")");
+            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
             lastThreadExecuted = threadName;
         }
         notify();
