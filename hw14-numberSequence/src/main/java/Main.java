@@ -1,6 +1,7 @@
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,7 +25,7 @@ public class Main {
         thread2.start();
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             return Collections.emptyMap();
         }
@@ -52,16 +53,15 @@ public class Main {
                 for (; i < 10; i++) {
                     writeNumber(sequence, i);
                 }
-                if (Thread.currentThread().getName().equals("2")) {
-                    try {
-                        System.out.println(Thread.currentThread().getName() + " - sleeping");
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
                 for (; i > 1; i--) {
                     writeNumber(sequence, i);
+                }
+                Random random = new Random();
+                int randInt = random.nextInt(5);
+                if (randInt == 1) {
+                    System.out.println("breakpoint");
+                    //breakpoint here
+                    int a = 1;
                 }
             }
         }
@@ -82,7 +82,7 @@ public class Main {
 //            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
             lastThreadExecuted = threadName;
         } else if (!lastThreadExecuted.equals(threadName))  {
-            System.out.println(" " + "(" + Thread.currentThread().getName() + ")");
+//            System.out.println(" " + "(" + Thread.currentThread().getName() + ")");
             System.out.println(number + "(" + Thread.currentThread().getName() + ")");
 //            sequence.append(" " + "(" + Thread.currentThread().getName() + ")");
 //            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
