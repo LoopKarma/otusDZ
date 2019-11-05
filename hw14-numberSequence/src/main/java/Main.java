@@ -52,6 +52,14 @@ public class Main {
                 for (; i < 10; i++) {
                     writeNumber(sequence, i);
                 }
+                if (Thread.currentThread().getName().equals("2")) {
+                    try {
+                        System.out.println(Thread.currentThread().getName() + " - sleeping");
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 for (; i > 1; i--) {
                     writeNumber(sequence, i);
                 }
@@ -70,11 +78,14 @@ public class Main {
             }
         }
         if (lastThreadExecuted == null) {
-            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
+            System.out.println(number + "(" + Thread.currentThread().getName() + ")");
+//            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
             lastThreadExecuted = threadName;
         } else if (!lastThreadExecuted.equals(threadName))  {
-            sequence.append(" " + "(" + Thread.currentThread().getName() + ")");
-            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
+            System.out.println(" " + "(" + Thread.currentThread().getName() + ")");
+            System.out.println(number + "(" + Thread.currentThread().getName() + ")");
+//            sequence.append(" " + "(" + Thread.currentThread().getName() + ")");
+//            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
             lastThreadExecuted = threadName;
         }
         notify();
