@@ -16,6 +16,7 @@
         <module>hw04-logging</module>
         <module>hw11-atm</module>
         <module>hw15-json</module>
+        <module>hw14-numberSequence</module>
     </modules>
 
     <properties>
