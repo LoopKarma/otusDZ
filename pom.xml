@@ -34,6 +34,9 @@
         <javax.json.version>1.1.2</javax.json.version>
         <assertj-core.version>3.11.1</assertj-core.version>
         <h2.version>1.4.199</h2.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
+        <hibernate-core.version>5.4.4.Final</hibernate-core.version>
+        <spring-core.version>5.2.1.RELEASE</spring-core.version>
     </properties>
 
     <dependencyManagement>
@@ -94,10 +97,26 @@
                 <version>${javax.json-api.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate-core.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-classic.version}</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>

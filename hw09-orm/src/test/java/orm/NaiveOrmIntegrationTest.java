@@ -12,7 +12,7 @@ import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MainIntegrationTest {
+class NaiveOrmIntegrationTest {
     private static final String DB_HOST = "jdbc:h2:mem:";
     private static final String FIRST_USER_NAME = "first one";
     private static final String SECOND_USER_NAME = "second one";
