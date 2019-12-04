@@ -39,7 +39,8 @@ public class UserDaoHibernate implements UserDao {
         try {
             Session hibernateSession = currentSession.getHibernateSession();
             hibernateSession.persist(user);
-            return findById(user.getId()).get();
+
+            return user;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new DaoException(e);
