@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DbExecuter implements Repository {
     private Connection connection;
-    private HashMap<String, Optional<ClassMetaInfo>> metaInfoCache = new HashMap<>();
+    private HashMap<String, ClassMetaInfo> metaInfoCache = new HashMap<>();
 
     public DbExecuter(Connection connection) {
         this.connection = connection;
@@ -62,7 +62,7 @@ public class DbExecuter implements Repository {
 
     @Override
     public <T> T loadById(long id, Class<T> clazz) {
-        ClassMetaInfo classMetaInfo = metaInfoCache.get(clazz.getName()).get();
+        ClassMetaInfo classMetaInfo = getMetaInfo(clazz);
 
         StringBuilder selectBuilder = buildSelect(clazz, classMetaInfo);
 
@@ -95,12 +95,12 @@ public class DbExecuter implements Repository {
         String className = objectData.getClass().getName();
         if (!metaInfoCache.containsKey(className)) {
             ClassMetaInfo newMetaInfo = new ClassMetaInfo(objectData);
-            metaInfoCache.put(className, Optional.of(newMetaInfo));
+            metaInfoCache.put(className, newMetaInfo);
 
             return newMetaInfo;
         }
 
-        return metaInfoCache.get(className).get();
+        return metaInfoCache.get(className);
     }
 
     private static class ClassMetaInfo {
