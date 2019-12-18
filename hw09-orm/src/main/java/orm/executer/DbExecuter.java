@@ -8,7 +8,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DbExecuter implements Repository {
@@ -22,9 +25,9 @@ public class DbExecuter implements Repository {
     @Override
     public <T> void create(T objectData) {
         ClassMetaInfo metaInfo = getMetaInfo(objectData);
-        String sql = buildInsert(metaInfo, objectData);
+        String insertSql = metaInfo.insertQuery.apply(objectData);
 
-        try (CallableStatement insert = connection.prepareCall(sql)) {
+        try (CallableStatement insert = connection.prepareCall(insertSql)) {
             Savepoint savePoint = this.connection.setSavepoint("beforeInsert");
             try {
                 insert.executeUpdate();
@@ -39,14 +42,14 @@ public class DbExecuter implements Repository {
     }
 
     @Override
-    public <T> void update(T objectData) {
-        ClassMetaInfo metaInfo = new ClassMetaInfo(objectData);
-        Object o = loadById(metaInfo.idValue, objectData.getClass());
+    public <T> void update(T objectData) throws IllegalAccessException {
+        ClassMetaInfo metaInfo = getMetaInfo(objectData);
+        long id = (long) metaInfo.idField.get(objectData);
 
-        StringBuilder updateBuilder = buildUpdate(objectData, metaInfo, o);
+        String updateQuery = metaInfo.updateQuery.apply(objectData);
 
-        try (PreparedStatement pst = connection.prepareStatement(updateBuilder.toString())) {
-            pst.setInt(1, (int) metaInfo.idValue);
+        try (PreparedStatement pst = connection.prepareStatement(updateQuery)) {
+            pst.setInt(1, (int) id);
             Savepoint savePoint = this.connection.setSavepoint("beforeUpdate");
             try {
                 pst.executeUpdate();
@@ -63,10 +66,7 @@ public class DbExecuter implements Repository {
     @Override
     public <T> T loadById(long id, Class<T> clazz) {
         ClassMetaInfo classMetaInfo = getMetaInfo(clazz);
-
-        StringBuilder selectBuilder = buildSelect(clazz, classMetaInfo);
-
-        try (PreparedStatement pst = connection.prepareStatement(selectBuilder.toString())) {
+        try (PreparedStatement pst = connection.prepareStatement(classMetaInfo.selectQuery)) {
             pst.setInt(1, (int) id);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
@@ -80,7 +80,7 @@ public class DbExecuter implements Repository {
                         }
                         return newInstance;
                     } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                        throw new RuntimeException("Cannot create instance of " + clazz.getName());
+                        throw new RuntimeException("Cannot create instance of " + clazz.getName() + " reason:" + e.getMessage());
                     }
                 }
             }
@@ -92,7 +92,13 @@ public class DbExecuter implements Repository {
     }
 
     private <T> ClassMetaInfo getMetaInfo(T objectData) {
-        String className = objectData.getClass().getName();
+        String className;
+        if (objectData instanceof Class) {
+            className = ((Class) objectData).getName();
+        } else {
+            className = objectData.getClass().getName();
+        }
+
         if (!metaInfoCache.containsKey(className)) {
             ClassMetaInfo newMetaInfo = new ClassMetaInfo(objectData);
             metaInfoCache.put(className, newMetaInfo);
@@ -104,10 +110,11 @@ public class DbExecuter implements Repository {
     }
 
     private static class ClassMetaInfo {
-        private final String name;
         private final List<Field> fields;
-        private String idField;
-        private long idValue;
+        private Field idField;
+        private final Function<Object, String> updateQuery;
+        private final Function<Object, String> insertQuery;
+        private final String selectQuery;
 
         <T> ClassMetaInfo(T objectData) {
             Class<?> clazz = objectData.getClass();
@@ -116,56 +123,56 @@ public class DbExecuter implements Repository {
                     clazz,
                     f ->  {
                         if (f.isAnnotationPresent(Id.class)) {
-                            idField = f.getName();
+                            idField = f;
                             f.setAccessible(true);
-                            idValue = (long) f.get(objectData);
                         }
 
                         fields.add(f);
                     }
             );
-            this.name = clazz.getSimpleName().toLowerCase();
+            String tableName = clazz.getSimpleName().toLowerCase();
             this.fields = fields;
-            if (idField.isEmpty()) {
+            if (idField == null) {
                 throw new RuntimeException("Class should have Id annotation");
             }
+            this.updateQuery = createUpdateFunction(tableName, this.idField.getName(), this.fields);
+            this.selectQuery = buildSelect(tableName, this.idField.getName());
+            this.insertQuery = createInsertFunction(tableName, this.fields);
         }
-    }
 
-    private <T> String buildInsert(ClassMetaInfo metaInfo, T objectData) {
-        StringBuilder sqlBuilder = new StringBuilder("insert into ").append(metaInfo.name).append("(");
-        sqlBuilder.append(metaInfo.fields.stream().map(Field::getName).collect(Collectors.joining(",")));
-        sqlBuilder.append(") values (");
-        for (Field field: metaInfo.fields) {
-            field.setAccessible(true);
-            sqlBuilder.append("'").append(ReflectionUtils.getField(field, objectData).toString()).append("',");
+        private Function<Object, String> createUpdateFunction(String tableName, String idField, List<Field> fields) {
+            return objectData -> {
+                String changedFields = fields.stream()
+                        .map(f -> f.getName() + "= '" + ReflectionUtils.getField(f, objectData) + "'")
+                        .collect(Collectors.joining(","));
+
+                return "update " +
+                        tableName +
+                        " " +
+                        "SET " +
+                        changedFields +
+                        " where " + idField + " = ?";
+            };
         }
-        sqlBuilder.setLength(sqlBuilder.length() - 1);
-        sqlBuilder.append(")");
 
-        return sqlBuilder.toString();
-    }
+        private Function<Object, String> createInsertFunction(String tableName, List<Field> fields) {
+            return objectData -> {
+                StringBuilder sqlBuilder = new StringBuilder("insert into ").append(tableName).append("(");
+                sqlBuilder.append(fields.stream().map(Field::getName).collect(Collectors.joining(",")));
+                sqlBuilder.append(") values (");
+                for (Field field: fields) {
+                    field.setAccessible(true);
+                    sqlBuilder.append("'").append(ReflectionUtils.getField(field, objectData).toString()).append("',");
+                }
+                sqlBuilder.setLength(sqlBuilder.length() - 1);
+                sqlBuilder.append(")");
 
-    private <T> StringBuilder buildSelect(Class<T> clazz, ClassMetaInfo classMetaInfo) {
-        String selectFrom = clazz.getSimpleName().toLowerCase();
-        StringBuilder selectBuilder = new StringBuilder("select * from ");
-        selectBuilder.append(selectFrom).append(" where ").append(classMetaInfo.idField).append(" = ?");
-        return selectBuilder;
-    }
+                return sqlBuilder.toString();
+            };
+        }
 
-    private <T> StringBuilder buildUpdate(T objectData, ClassMetaInfo metaInfo, Object o) {
-        String changedFields = metaInfo.fields.stream()
-                .filter(f -> ReflectionUtils.getField(f, objectData) != ReflectionUtils.getField(f, o))
-                .map(f -> f.getName() + "= '" + ReflectionUtils.getField(f, objectData) + "'")
-                .collect(Collectors.joining(","));
-
-
-        var updateBuilder = new StringBuilder("update ");
-        updateBuilder
-                .append(metaInfo.name)
-                .append(" ")
-                .append("SET ").append(changedFields)
-                .append(" where ").append(metaInfo.idField).append(" = ?");
-        return updateBuilder;
+        private String buildSelect(String tableName, String idField) {
+            return "select * from " + tableName + " where " + idField + " = ?";
+        }
     }
 }

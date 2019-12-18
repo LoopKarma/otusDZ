@@ -32,7 +32,7 @@ class MainIntegrationTest {
     }
 
     @Test
-    void createUser() throws SQLException {
+    void createUser() {
         DbExecuter dbExecuter = new DbExecuter(connection);
 
         var firstUser = new User(1, "first one", 20);
@@ -57,7 +57,7 @@ class MainIntegrationTest {
     }
 
     @Test
-    void updateUser() throws SQLException {
+    void updateUser() throws IllegalAccessException {
         DbExecuter dbExecuter = new DbExecuter(connection);
 
         int secondAge = 17;
@@ -100,7 +100,7 @@ class MainIntegrationTest {
     }
 
     @Test
-    void updateAccountItem() throws SQLException {
+    void updateAccountItem() throws SQLException, IllegalAccessException {
         DbExecuter dbExecuter = new DbExecuter(connection);
         var first = new Account(1L, "first", new BigDecimal(123));
         var second = new Account(2L, "second", new BigDecimal(124));
@@ -127,15 +127,6 @@ class MainIntegrationTest {
         String sql = "create table account(no bigint(20) NOT NULL auto_increment, type varchar(255), rest number)";
         try (PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.executeUpdate();
-        }
-    }
-
-    private boolean isEntityExist(int id, String table) throws SQLException {
-        try (PreparedStatement pst = connection.prepareStatement("select * from " + table + " where id  = ?")) {
-            pst.setInt(1, id);
-            try (ResultSet rs = pst.executeQuery()) {
-                return rs.next();
-            }
         }
     }
 }
