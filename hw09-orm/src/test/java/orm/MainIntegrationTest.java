@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import orm.entity.Account;
 import orm.entity.User;
 import orm.executer.DbExecuter;
+import orm.repository.Repository;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -33,7 +34,7 @@ class MainIntegrationTest {
 
     @Test
     void createUser() {
-        DbExecuter dbExecuter = new DbExecuter(connection);
+        Repository dbExecuter = new DbExecuter(connection);
 
         var firstUser = new User(1, "first one", 20);
         var secondUser = new User(2, "second one", 17);
