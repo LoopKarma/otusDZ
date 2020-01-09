@@ -1,6 +1,7 @@
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,12 +18,14 @@ public class Main {
     Map<Integer, StringBuilder> run() {
         Thread thread1 = new Thread(new ThreadTask(sequenceT1));
         Thread thread2 = new Thread(new ThreadTask(sequenceT2));
+        thread1.setName("1");
+        thread2.setName("2");
 
         thread1.start();
         thread2.start();
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             return Collections.emptyMap();
         }
@@ -53,6 +56,13 @@ public class Main {
                 for (; i > 1; i--) {
                     writeNumber(sequence, i);
                 }
+                Random random = new Random();
+                int randInt = random.nextInt(5);
+                if (randInt == 1) {
+                    System.out.println("breakpoint");
+                    //breakpoint here
+                    int a = 1;
+                }
             }
         }
     }
@@ -68,11 +78,14 @@ public class Main {
             }
         }
         if (lastThreadExecuted == null) {
-            sequence.append(number);
+            System.out.println(number + "(" + Thread.currentThread().getName() + ")");
+//            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
             lastThreadExecuted = threadName;
         } else if (!lastThreadExecuted.equals(threadName))  {
-            sequence.append(" ");
-            sequence.append(number);
+//            System.out.println(" " + "(" + Thread.currentThread().getName() + ")");
+            System.out.println(number + "(" + Thread.currentThread().getName() + ")");
+//            sequence.append(" " + "(" + Thread.currentThread().getName() + ")");
+//            sequence.append(number + "(" + Thread.currentThread().getName() + ")");
             lastThreadExecuted = threadName;
         }
         notify();
