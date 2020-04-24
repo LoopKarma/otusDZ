@@ -13,9 +13,9 @@ public class DbServiceUserCacheable implements DbServiceUser {
     private static Logger logger = LoggerFactory.getLogger(DbServiceUserCacheable.class);
 
     private final UserDao userDao;
-    private final MyCache<Long, User> cache;
+    private final MyCache<String, User> cache;
 
-    public DbServiceUserCacheable(UserDao userDao, MyCache<Long, User> cache) {
+    public DbServiceUserCacheable(UserDao userDao, MyCache<String, User> cache) {
         this.userDao = userDao;
         this.cache = cache;
     }
@@ -27,6 +27,7 @@ public class DbServiceUserCacheable implements DbServiceUser {
             try {
                 var savedUser = userDao.create(user);
                 sessionManager.commitSession();
+                saveUserToCache(savedUser);
 
                 logger.info("created user: {}", savedUser.getId());
                 return savedUser;
@@ -45,6 +46,7 @@ public class DbServiceUserCacheable implements DbServiceUser {
             try {
                 var updatedUser = userDao.update(user);
                 sessionManager.commitSession();
+                saveUserToCache(updatedUser);
 
                 logger.info("updated user: {}", updatedUser.getId());
                 return updatedUser;
@@ -58,7 +60,7 @@ public class DbServiceUserCacheable implements DbServiceUser {
 
     @Override
     public Optional<User> getUser(long id) {
-        User cachedValue = cache.get(id);
+        User cachedValue = cache.get(String.valueOf(id));
         if (cachedValue != null) {
             return Optional.of(cachedValue);
         }
@@ -68,13 +70,23 @@ public class DbServiceUserCacheable implements DbServiceUser {
                 Optional<User> userOptional = userDao.findById(id);
 
                 logger.info("user: {}", userOptional.orElse(null));
-                cache.put(id, userOptional.get());
+                saveUserToCache(userOptional);
                 return userOptional;
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 sessionManager.rollbackSession();
             }
             return Optional.empty();
+        }
+    }
+
+    private void saveUserToCache(User user) {
+        cache.put(String.valueOf(user.getId()), user);
+    }
+
+    private void saveUserToCache(Optional<User> user) {
+        if (user.isPresent()) {
+            cache.put(String.valueOf(user.get().getId()), user.get());
         }
     }
 }

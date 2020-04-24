@@ -9,10 +9,8 @@ public class MyCache<K, V> implements HwCache<K, V> {
 
     @Override
     public void put(K key, V value) {
-        if (!map.containsKey(key)) {
-            map.put(key, value);
-            listeners.forEach(l -> l.notify(key, value, "put"));
-        }
+        map.put(key, value);
+        listeners.forEach(l -> l.notify(key, value, "put"));
     }
 
     @Override

@@ -29,10 +29,10 @@ public class WithAbstractionsTest extends AbstractHibernateUserTest {
         SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
         UserDao userDao = new UserDaoHibernate(sessionManager);
         cacheListenerMessages.clear();
-        HwListener<Long, User> listener = (key, value, action) ->
+        HwListener<String, User> listener = (key, value, action) ->
                 cacheListenerMessages.add(String.format("User %s, action %s", value.toString(), action));
 
-        MyCache<Long, User> cache = new MyCache<>();
+        MyCache<String, User> cache = new MyCache<>();
         cache.addListener(listener);
         dbServiceUser = new DbServiceUserCacheable(userDao, cache);
     }
