@@ -1,0 +1,42 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Users</title>
+</head>
+
+<body>
+<h4>Create user</h4>
+<form action="users" method="post">
+    <input type="text" name="id" value="" placeholder="Enter user id">
+    <input type="text" name="name" value="" placeholder="Enter user name">
+    <input type="text" name="login" value="" placeholder="Enter user login">
+    <input type="text" name="password" value="" placeholder="Enter user password">
+    <input type="text" name="role" value="" placeholder="Enter user role(user, admin)">
+    <input type="submit" value="Submit">
+</form>
+
+
+<h4>List of users</h4>
+<table style="width: 400px">
+    <thead>
+        <tr>
+            <td style="width: 50px">Id</td>
+            <td style="width: 150px">Name</td>
+            <td style="width: 100px">Login</td>
+            <td style="width: 100px">Password</td>
+            <td style="width: 100px">Role</td>
+        </tr>
+    </thead>
+    <tbody>
+        <#list users as user>
+        <tr>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.login}</td>
+            <td>${user.password}</td>
+            <td>${user.role}</td>
+        </tr>
+        </#list>
+    </tbody>
+</table>
+</body>
+</html>
