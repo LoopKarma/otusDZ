@@ -9,7 +9,7 @@ import ru.otus.repository.UserRepository;
 
 import java.util.Collection;
 
-@RequestMapping("user-json")
+@RequestMapping("v1/users")
 @RestController
 @RequiredArgsConstructor
 public class UserRestController {
