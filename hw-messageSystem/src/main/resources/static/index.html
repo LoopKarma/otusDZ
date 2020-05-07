@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User's dashboard</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
+<div id="main-content" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Login</th>
+                        <th>Name</th>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody id="users"></tbody>
+            </table>
+        </div>
+    </div>
+    <hr class="mt-2 mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-group" id="createUser">
+                <p>Create new user</p>
+                <div class="col-md-6">
+                    <label>Login</label>
+                    <input type="text" name="login" class="form-control" placeholder="login">
+                </div>
+                <div class="col-md-6">
+                    <label>Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="name">
+                </div>
+                <div class="col-md-6">
+                    <label>Password</label>
+                    <input type="text" name="password" class="form-control" placeholder="password">
+                </div>
+
+                <div class="col-md-3">
+                    <button class="btn btn-success" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
