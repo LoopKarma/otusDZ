@@ -8,10 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.dto.CreateUserDTO;
-import ru.otus.dto.Message;
+import ru.otus.dto.WebSocketMessageDTO;
 import ru.otus.front.FrontendService;
 import ru.otus.model.User;
 import ru.otus.repository.UserRepository;
@@ -31,7 +30,7 @@ public class UserController {
         log.info("Request for creating createUserDTO: {}", createUserDTO);
         frontendService.createUser(createUserDTO, user -> {
             try {
-                simpMessagingTemplate.convertAndSend("/topic/users/response", new Message(objectMapper.writeValueAsString(user)));
+                simpMessagingTemplate.convertAndSend("/topic/users/response", new WebSocketMessageDTO(objectMapper.writeValueAsString(user)));
             } catch (JsonProcessingException e) {
                 log.error("Unable to create json from user", e);
             }
