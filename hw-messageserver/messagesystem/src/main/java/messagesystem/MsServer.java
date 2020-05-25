@@ -1,5 +1,8 @@
 package messagesystem;
 
+import common.messaging.ClientType;
+import common.messaging.MessageType;
+import common.messaging.MsClient;
 import lombok.extern.slf4j.Slf4j;
 import messagesystem.db.DBService;
 import messagesystem.db.DBServiceImpl;
@@ -8,18 +11,8 @@ import messagesystem.db.handlers.GetUsersRequestHandler;
 import messagesystem.frontend.handler.FrontendHandler;
 import messagesystem.messagesystem.*;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import static java.lang.Runtime.getRuntime;
 
 @Slf4j
 public class MsServer {

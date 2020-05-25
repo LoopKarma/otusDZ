@@ -1,6 +1,6 @@
 package messagesystem.db;
 
-import messagesystem.dto.CreateUserDTO;
+import common.dto.CreateUserDTO;
 
 public interface DBService {
     String requestUsers();

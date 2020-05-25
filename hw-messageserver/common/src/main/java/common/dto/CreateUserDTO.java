@@ -1,4 +1,4 @@
-package messagesystem.dto;
+package common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

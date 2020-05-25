@@ -1,11 +1,11 @@
 package frontend.responsehandlers;
 
 import frontend.service.FrontendService;
-import frontend.util.Serializers;
+import common.util.Serializers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import messagesystem.messagesystem.Message;
-import messagesystem.messagesystem.RequestHandler;
+import common.messaging.Message;
+import common.messaging.RequestHandler;
 import java.util.Optional;
 import java.util.UUID;
 

@@ -2,10 +2,10 @@ package frontend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import messagesystem.dto.CreateUserDTO;
-import messagesystem.messagesystem.Message;
-import messagesystem.messagesystem.MessageType;
-import messagesystem.messagesystem.MsClient;
+import common.dto.CreateUserDTO;
+import common.messaging.Message;
+import common.messaging.MessageType;
+import common.messaging.MsClient;
 
 import java.util.Map;
 import java.util.Optional;

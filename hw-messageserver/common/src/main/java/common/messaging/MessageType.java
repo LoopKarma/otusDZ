@@ -1,4 +1,4 @@
-package messagesystem.messagesystem;
+package common.messaging;
 
 public enum MessageType {
   CREATE_USER("User.Create"),

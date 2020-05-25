@@ -1,4 +1,4 @@
-package messagesystem.dto;
+package common.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

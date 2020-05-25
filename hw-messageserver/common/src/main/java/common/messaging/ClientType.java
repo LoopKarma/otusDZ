@@ -1,4 +1,4 @@
-package messagesystem;
+package common.messaging;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

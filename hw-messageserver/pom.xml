@@ -18,6 +18,7 @@
         <module>frontend</module>
         <module>storage</module>
         <module>messagesystem</module>
+        <module>common</module>
     </modules>
 
     <packaging>pom</packaging>

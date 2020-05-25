@@ -1,16 +1,16 @@
 package messagesystem.db.handlers;
 
 import lombok.RequiredArgsConstructor;
-import messagesystem.common.Serializers;
+import common.util.Serializers;
 import messagesystem.db.DBService;
-import messagesystem.dto.CreateUserDTO;
-import messagesystem.messagesystem.Message;
-import messagesystem.messagesystem.MessageType;
-import messagesystem.messagesystem.RequestHandler;
+import common.dto.CreateUserDTO;
+import common.messaging.Message;
+import common.messaging.MessageType;
+import common.messaging.RequestHandler;
 
 import java.util.Optional;
 
-import static messagesystem.ClientType.*;
+import common.messaging.ClientType;
 
 @RequiredArgsConstructor
 public class CreateUserRequestHandler implements RequestHandler {
@@ -22,8 +22,8 @@ public class CreateUserRequestHandler implements RequestHandler {
 
         return Optional.of(
                 new Message(
-                        DATABASE.getType(),
-                        FRONTEND.getType(),
+                        ClientType.DATABASE.getType(),
+                        ClientType.FRONTEND.getType(),
                         msg.getId(),
                         MessageType.CREATE_USER.getValue(),
                         Serializers.serialize(dbService.createUser(createUserDTO))

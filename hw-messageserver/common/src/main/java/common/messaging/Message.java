@@ -1,11 +1,11 @@
-package messagesystem.messagesystem;
+package common.messaging;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Message implements Serializable {
-  static final Message VOID_MESSAGE = new Message();
+  public static final Message VOID_MESSAGE = new Message();
 
   private final UUID id = UUID.randomUUID();
   private final String from;

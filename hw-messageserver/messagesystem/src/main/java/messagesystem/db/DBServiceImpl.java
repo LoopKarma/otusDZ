@@ -3,7 +3,7 @@ package messagesystem.db;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import messagesystem.dto.CreateUserDTO;
+import common.dto.CreateUserDTO;
 
 import java.net.URI;
 import java.net.http.HttpClient;

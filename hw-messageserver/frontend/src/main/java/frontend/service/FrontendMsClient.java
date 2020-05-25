@@ -1,12 +1,12 @@
 package frontend.service;
 
-import frontend.util.Serializers;
+import common.util.Serializers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import messagesystem.messagesystem.Message;
-import messagesystem.messagesystem.MessageType;
-import messagesystem.messagesystem.MsClient;
-import messagesystem.messagesystem.RequestHandler;
+import common.messaging.Message;
+import common.messaging.MessageType;
+import common.messaging.MsClient;
+import common.messaging.RequestHandler;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,7 +21,6 @@ public class FrontendMsClient implements MsClient {
     private final int msPort;
     private final Map<String, RequestHandler> handlers = new ConcurrentHashMap<>();
 
-    @Override
     public void addHandler(MessageType type, RequestHandler requestHandler) {
         this.handlers.put(type.getValue(), requestHandler);
     }

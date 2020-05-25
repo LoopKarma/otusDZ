@@ -3,7 +3,7 @@ package messagesystem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import messagesystem.frontend.handler.FrontendHandler;
-import messagesystem.messagesystem.Message;
+import common.messaging.Message;
 import messagesystem.messagesystem.MessageSystem;
 
 import java.io.ObjectInputStream;

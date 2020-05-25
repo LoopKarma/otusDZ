@@ -1,4 +1,4 @@
-package messagesystem.messagesystem;
+package common.messaging;
 
 import java.util.Optional;
 

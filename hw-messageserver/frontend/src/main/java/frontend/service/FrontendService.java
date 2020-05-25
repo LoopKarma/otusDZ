@@ -1,6 +1,6 @@
 package frontend.service;
 
-import messagesystem.dto.CreateUserDTO;
+import common.dto.CreateUserDTO;
 
 import java.util.Optional;
 import java.util.UUID;

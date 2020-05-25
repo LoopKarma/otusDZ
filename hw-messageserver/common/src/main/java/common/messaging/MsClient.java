@@ -1,4 +1,4 @@
-package messagesystem.messagesystem;
+package common.messaging;
 
 public interface MsClient {
 
@@ -10,6 +10,5 @@ public interface MsClient {
 
   String getName();
 
-  <T> Message produceMessage(String to, T data, MessageType msgType);
-
+   <T> Message produceMessage(String to, T data, MessageType msgType);
 }

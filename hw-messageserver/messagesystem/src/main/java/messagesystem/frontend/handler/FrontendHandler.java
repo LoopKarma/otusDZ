@@ -2,8 +2,8 @@ package messagesystem.frontend.handler;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import messagesystem.messagesystem.Message;
-import messagesystem.messagesystem.RequestHandler;
+import common.messaging.Message;
+import common.messaging.RequestHandler;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

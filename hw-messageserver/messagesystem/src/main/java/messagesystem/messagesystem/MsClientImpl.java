@@ -2,7 +2,12 @@ package messagesystem.messagesystem;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import messagesystem.common.Serializers;
+import common.util.Serializers;
+
+import common.messaging.MsClient;
+import common.messaging.RequestHandler;
+import common.messaging.Message;
+import common.messaging.MessageType;
 
 import java.util.Map;
 import java.util.Objects;

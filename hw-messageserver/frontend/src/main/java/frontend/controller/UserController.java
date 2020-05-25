@@ -3,7 +3,7 @@ package frontend.controller;
 import frontend.service.FrontendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import messagesystem.dto.CreateUserDTO;
+import common.dto.CreateUserDTO;
 import frontend.dto.WebSocketMessageDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
