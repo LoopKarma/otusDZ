@@ -37,7 +37,7 @@
         <javax.json-api.version>1.1.4</javax.json-api.version>
         <javax.json.version>1.1.2</javax.json.version>
         <assertj-core.version>3.11.1</assertj-core.version>
-        <h2.version>1.4.199</h2.version>
+        <h2.version>2.0.206</h2.version>
     </properties>
 
     <dependencyManagement>
